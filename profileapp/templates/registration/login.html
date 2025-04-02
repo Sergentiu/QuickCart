@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+    <div style="max-width: 400px; margin: auto; padding: 20px; border: 1px solid #007BFF; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <h1 style="text-align: center; color: #007BFF;">Login</h1>
+
+        <form action="" method="post">
+            {% csrf_token %}
+            <div style="margin-bottom: 20px;">
+                {{ form.as_p }}
+            </div>
+
+            <input type="submit" value="Login" style="width: 100%; padding: 10px; font-size: 1.2em; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
+        </form>
+
+        <a href="{% url 'register_url' %}" style="text-decoration: none;">
+            <button style="margin-top: 15px; width: 100%; padding: 10px; font-size: 1.2em; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
+                Don't have an account? Register now
+            </button>
+        </a>
+    </div>
+
+    <style>
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+    </style>
+{% endblock main %}

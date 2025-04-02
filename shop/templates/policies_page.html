@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <h1 style="text-align: center; color: #007BFF;">Store Policies</h1>
+
+    <div class="policies-container" style="max-width: 800px; margin: 20px auto; padding: 15px; background-color: white; border: 1px solid #007BFF; border-radius: 8px;">
+        {% for policy in policies %}
+            <div style="border-bottom: 1px solid #ddd; padding: 10px 0;">
+                <strong style="color: #007BFF;">{{ policy.key|capfirst }}</strong><br>
+                <p style="margin: 5px 0;">{{ policy.value }}</p>
+            </div>
+        {% empty %}
+            <p>No policies available.</p>
+        {% endfor %}
+    </div>
+
+    <style>
+        .dark-mode .policies-container {
+            background-color: #121212 !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+
+        .dark-mode .policies-container strong {
+            color: #1e90ff !important; /* Keep blue for contrast */
+        }
+
+        .dark-mode .policies-container p {
+            color: #ffffff !important;
+        }
+    </style>
+{% endblock main %}

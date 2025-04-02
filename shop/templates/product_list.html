@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div id="main">
+        <h1 style="text-align: center; color: #007BFF;">Shop</h1>
+
+        <ol style="list-style-type: none; padding: 0; display: flex; flex-wrap: wrap; justify-content: center;">
+            {% for prod in products %}
+                <li style="margin: 15px; border: 1px solid #007BFF; border-radius: 8px; overflow: hidden; width: 200px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); transition: transform 0.3s;">
+                    <a href="{{ prod.slug }}" style="text-decoration: none; color: inherit; display: block; padding: 10px; text-align: center;">
+                        <h2 style="font-size: 1.5em; margin: 0;">{{ prod.name }}</h2>
+                        <p style="color: #555;">{{ prod.description }}</p>
+                    </a>
+                </li>
+            {% endfor %}
+        </ol>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{% url 'faq_page' %}" style="text-decoration: none;">
+                <button style="padding: 10px 20px; font-size: 1em; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    View FAQs
+                </button>
+            </a>
+            <a href="{% url 'policies_page' %}" style="text-decoration: none; margin-left: 10px;">
+                <button style="padding: 10px 20px; font-size: 1em; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    View Policies
+                </button>
+            </a>
+            <!-- Dark Mode Button -->
+            <button id="darkModeToggle" style="padding: 10px 20px; font-size: 1em; background-color: #333; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                Toggle Dark Mode
+            </button>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Check localStorage for dark mode preference
+                var darkModeEnabled = localStorage.getItem('darkMode') === 'true' || "{{ request.session.dark_mode }}" === "True";
+                if (darkModeEnabled) {
+                    document.body.classList.add("dark-mode");
+                    localStorage.setItem('darkMode', 'true');
+                }
+
+                var darkModeButton = document.getElementById("darkModeToggle");
+                if (darkModeButton) {
+                    darkModeButton.addEventListener("click", function () {
+                        fetch("{% url 'toggle_dark_mode' %}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": "{{ csrf_token }}"
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.dark_mode) {
+                                document.body.classList.add("dark-mode");
+                                localStorage.setItem('darkMode', 'true');
+                            } else {
+                                document.body.classList.remove("dark-mode");
+                                localStorage.setItem('darkMode', 'false');
+                            }
+                        })
+                        .catch(error => console.error("Error toggling Dark Mode:", error));
+                    });
+                }
+            });
+        </script>
+
+        <style>
+            .dark-mode {
+                background-color: #121212 !important;
+                color: #ffffff !important;
+            }
+            .dark-mode h1 {
+                color: #3a9fff !important;
+            }
+            .dark-mode a {
+                color: inherit !important;
+            }
+            .dark-mode button:hover {
+                background-color: #0056b3;
+            }
+            .dark-mode li {
+                border-color: #404040 !important;
+                background-color: #2d2d2d !important;
+            }
+            .dark-mode p {
+                color: #ffffff !important;
+            }
+            /* Only target buttons within the main content, not in the header */
+            .dark-mode #main button {
+                background-color: #007BFF !important;
+            }
+        </style>
+    </div>
+{% endblock main %}

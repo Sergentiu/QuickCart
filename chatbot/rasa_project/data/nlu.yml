@@ -1,0 +1,387 @@
+version: "3.1"
+
+nlu:
+# Intent: Greetings
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - hey there
+    - let's go
+    - good afternoon
+
+# Intent: Goodbye
+- intent: goodbye
+  examples: |
+    - bye
+    - goodbye
+    - see you later
+    - take care
+    - talk to you later
+    - bye bye
+    - have a nice day
+
+# Intent: Affirmation
+- intent: affirm
+  examples: |
+    - yes
+    - yeah
+    - sure
+    - absolutely
+    - correct
+    - indeed
+    - that's right
+
+# Intent: Denial
+- intent: deny
+  examples: |
+    - no
+    - nope
+    - not really
+    - I don't think so
+    - never
+    - not at all
+
+# Intent: Bot Challenge
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - who are you?
+    - what are you?
+    - tell me about yourself
+
+# Intent: User is happy
+- intent: mood_great
+  examples: |
+    - I'm feeling great
+    - I am happy
+    - I'm doing well
+    - Everything is awesome
+    - Life is good
+    - I feel amazing
+
+# Intent: User is unhappy
+- intent: mood_unhappy
+  examples: |
+    - I'm feeling down
+    - I'm sad
+    - I don't feel well
+    - I'm disappointed
+    - I am not happy
+    - Feeling depressed
+    - Having a bad day
+
+# Intent: Fetch product list dynamically
+- intent: fetch_product_list
+  examples: |
+    - Show me all available products
+    - What products do you have?
+    - List all your products
+    - Tell me what items you sell
+
+# Intent: Ask Product Price
+- intent: ask_product_price
+  examples: |
+    - What is the price of [Air Force 1](product_name)?
+    - What is the price of [AF1](product_name)?
+    - What is the price of [Nike Air Force](product_name)?
+    - What is the price of [Nike Air Force 1](product_name)?
+    - What is the price of [Air Force One](product_name)?
+    - What is the price of [Nike AF1](product_name)?
+    - What is the price of [Nike Air Force One](product_name)?
+    - What is the price of [Airforce 1](product_name)?
+    - What is the price of [Airforce One](product_name)?
+    - What is the price of [Nike Airforce 1](product_name)?
+    - What is the price of [Nike Airforce One](product_name)?
+    - What is the price of [Force 1](product_name)?
+    - What is the price of [Force One](product_name)?
+    - What is the price of [Jordan 4](product_name)?
+    - What is the price of [Jordan IV](product_name)?
+    - What is the price of [Jordan 4 Retro](product_name)?
+    - What is the price of [Jordan IV Retro](product_name)?
+    - What is the price of [Nike Jordan 4](product_name)?
+    - What is the price of [Nike Jordan IV](product_name)?
+    - What is the price of [Retro 4](product_name)?
+    - What is the price of [Retro IV](product_name)?
+    - What is the price of [Jordan Retro 4](product_name)?
+    - What is the price of [Jordan Retro IV](product_name)?
+    - What is the price of [T-Shirt](product_name)?
+    - What is the price of [Tshirt](product_name)?
+    - What is the price of [T Shirt](product_name)?
+    - What is the price of [Tee](product_name)?
+    - What is the price of [Tee Shirt](product_name)?
+    - What is the price of [Jeans](product_name)?
+    - What is the price of [Jean](product_name)?
+    - What is the price of [Denim](product_name)?
+    - What is the price of [Denims](product_name)?
+    - What is the price of [Blue Jeans](product_name)?
+    - What is the price of [Underwear](product_name)?
+    - What is the price of [Undergarment](product_name)?
+    - What is the price of [Undies](product_name)?
+    - What is the price of [Socks](product_name)?
+    - What is the price of [Sock](product_name)?
+    - What is the price of [Washing Machine](product_name)?
+    - What is the price of [Washer](product_name)?
+    - What is the price of [Clothes Washer](product_name)?
+    - What is the price of [Fridge](product_name)?
+    - What is the price of [Refrigerator](product_name)?
+    - What is the price of [Microwave](product_name)?
+    - What is the price of [Microwave Oven](product_name)?
+    - What is the price of [Blender](product_name)?
+    - What is the price of [Food Processor](product_name)?
+    - What is the price of [Mixer](product_name)?
+    - What is the price of [Spark Plug](product_name)?
+    - What is the price of [Sparkplug](product_name)?
+    - What is the price of [Motor Oil](product_name)?
+    - What is the price of [Engine Oil](product_name)?
+    - What is the price of [Oil](product_name)?
+    - What is the price of [Burger](product_name)?
+    - What is the price of [Hamburger](product_name)?
+    - What is the price of [Cheeseburger](product_name)?
+    - What is the price of [Pizza](product_name)?
+    - What is the price of [Croissant](product_name)?
+    - What is the price of [Bucket](product_name)?
+    - What is the price of [Pail](product_name)?
+    - What is the price of [Pen](product_name)?
+    - What is the price of [Tire](product_name)?
+    - What is the price of [Tyre](product_name)?
+    - What is the price of [Car Tire](product_name)?
+    - What is the price of [Car Tyre](product_name)?
+    - What is the price of [Wheel](product_name)?
+
+# Intent: Ask Product Details
+- intent: ask_product_details
+  examples: |
+    - Tell me about [Air Force 1](product_name)
+    - Tell me about [AF1](product_name)
+    - Tell me about [Nike Air Force](product_name)
+    - Tell me about [Nike Air Force 1](product_name)
+    - Tell me about [Air Force One](product_name)
+    - Tell me about [Nike AF1](product_name)
+    - Tell me about [Nike Air Force One](product_name)
+    - Tell me about [Airforce 1](product_name)
+    - Tell me about [Airforce One](product_name)
+    - Tell me about [Nike Airforce 1](product_name)
+    - Tell me about [Nike Airforce One](product_name)
+    - Tell me about [Force 1](product_name)
+    - Tell me about [Force One](product_name)
+    - Tell me about [Jordan 4](product_name)
+    - Tell me about [Jordan IV](product_name)
+    - Tell me about [Jordan 4 Retro](product_name)
+    - Tell me about [Jordan IV Retro](product_name)
+    - Tell me about [Nike Jordan 4](product_name)
+    - Tell me about [Nike Jordan IV](product_name)
+    - Tell me about [Retro 4](product_name)
+    - Tell me about [Retro IV](product_name)
+    - Tell me about [Jordan Retro 4](product_name)
+    - Tell me about [Jordan Retro IV](product_name)
+    - Tell me about [T-Shirt](product_name)
+    - Tell me about [Tshirt](product_name)
+    - Tell me about [T Shirt](product_name)
+    - Tell me about [Tee](product_name)
+    - Tell me about [Tee Shirt](product_name)
+    - Tell me about [Jeans](product_name)
+    - Tell me about [Jean](product_name)
+    - Tell me about [Denim](product_name)
+    - Tell me about [Denims](product_name)
+    - Tell me about [Blue Jeans](product_name)
+    - Tell me about [Underwear](product_name)
+    - Tell me about [Undergarment](product_name)
+    - Tell me about [Undies](product_name)
+    - Tell me about [Socks](product_name)
+    - Tell me about [Sock](product_name)
+    - Tell me about [Washing Machine](product_name)
+    - Tell me about [Washer](product_name)
+    - Tell me about [Clothes Washer](product_name)
+    - Tell me about [Fridge](product_name)
+    - Tell me about [Refrigerator](product_name)
+    - Tell me about [Microwave](product_name)
+    - Tell me about [Microwave Oven](product_name)
+    - Tell me about [Blender](product_name)
+    - Tell me about [Food Processor](product_name)
+    - Tell me about [Mixer](product_name)
+    - Tell me about [Spark Plug](product_name)
+    - Tell me about [Sparkplug](product_name)
+    - Tell me about [Motor Oil](product_name)
+    - Tell me about [Engine Oil](product_name)
+    - Tell me about [Oil](product_name)
+    - Tell me about [Burger](product_name)
+    - Tell me about [Hamburger](product_name)
+    - Tell me about [Cheeseburger](product_name)
+    - Tell me about [Pizza](product_name)
+    - Tell me about [Croissant](product_name)
+    - Tell me about [Bucket](product_name)
+    - Tell me about [Pail](product_name)
+    - Tell me about [Pen](product_name)
+    - Tell me about [Tire](product_name)
+    - Tell me about [Tyre](product_name)
+    - Tell me about [Car Tire](product_name)
+    - Tell me about [Car Tyre](product_name)
+    - Tell me about [Wheel](product_name)
+
+# Intent: Check Order Status
+- intent: check_order_status
+  examples: |
+    - Where is my order with ID [12345](order_id)?
+    - Can you check the status of order [98765](order_id)?
+    - What's happening with my order [45678](order_id)?
+    - Tell me my order status for [32165](order_id)?
+    - I want to know where my order [54321](order_id) is?
+    - Check my order [11223](order_id)?
+    - What's the status of order number [99887](order_id)?
+    - Where is order [44556](order_id) at?
+    - Track my order [77665](order_id)?
+
+# Intent: Ask FAQ
+- intent: ask_faq
+  examples: |
+    - What are your frequently asked questions?
+    - Show me your FAQs
+    - I have some questions
+    - FAQ
+    - Help
+    - Show me help topics
+    - What kind of help do you offer?
+    - Can you show me the FAQs?
+
+# Intent: Ask Policies
+- intent: ask_policies
+  examples: |
+    - What are your policies?
+    - Show me your policies
+    - I want to know about your policies
+    - Tell me about your store policies
+    - What are the store policies?
+    - Can you show me the policies?
+    - Policy information please
+    - What are the rules?
+
+# Regex Patterns
+- regex: product_name_pattern
+  examples: |
+    - (?i)(t[- ]?shirt|jeans|underwear|socks|jordan\s*4\s*retro|washing\s*machine|fridge|microwave|blender|spark\s*plug|motor\s*oil|burger|pizza|croissant|bucket|pen|air\s*force\s*1|tire)
+- regex: order_id
+  examples: |
+    - \d{2,}
+
+# Lookup table for product names
+- lookup: product_name
+  examples: |
+    - T-Shirt
+    - Jeans
+    - Underwear
+    - Socks
+    - Jordan 4 Retro
+    - Washing Machine
+    - Fridge
+    - Microwave
+    - Blender
+    - Spark Plug
+    - Motor Oil
+    - Burger
+    - Pizza
+    - Croissant
+    - Bucket
+    - Pen
+    - Air Force 1
+    - Tire
+
+# Synonyms for product names
+- synonym: Air Force 1
+  examples: |
+    - AF1
+    - Nike Air Force
+    - Nike Air Force 1
+    - Air Force One
+    - Nike AF1
+    - Nike Air Force One
+    - Airforce 1
+    - Airforce One
+    - Nike Airforce 1
+    - Nike Airforce One
+    - Force 1
+    - Force One
+
+- synonym: Jordan 4 Retro
+  examples: |
+    - Jordan 4
+    - Jordan IV
+    - Jordan IV Retro
+    - Nike Jordan 4
+    - Nike Jordan IV
+    - Retro 4
+    - Retro IV
+    - Jordan Retro 4
+    - Jordan Retro IV
+
+- synonym: T-Shirt
+  examples: |
+    - Tshirt
+    - T Shirt
+    - Tee
+    - Tee Shirt
+
+- synonym: Jeans
+  examples: |
+    - Jean
+    - Denim
+    - Denims
+    - Blue Jeans
+
+- synonym: Underwear
+  examples: |
+    - Undergarment
+    - Undies
+
+- synonym: Socks
+  examples: |
+    - Sock
+
+- synonym: Washing Machine
+  examples: |
+    - Washer
+    - Clothes Washer
+
+- synonym: Fridge
+  examples: |
+    - Refrigerator
+
+- synonym: Microwave
+  examples: |
+    - Microwave Oven
+
+- synonym: Blender
+  examples: |
+    - Food Processor
+    - Mixer
+
+- synonym: Spark Plug
+  examples: |
+    - Sparkplug
+
+- synonym: Motor Oil
+  examples: |
+    - Engine Oil
+    - Oil
+
+- synonym: Burger
+  examples: |
+    - Hamburger
+    - Cheeseburger
+
+- synonym: Bucket
+  examples: |
+    - Pail
+
+- synonym: Tire
+  examples: |
+    - Tyre
+    - Car Tire
+    - Car Tyre
+    - Wheel

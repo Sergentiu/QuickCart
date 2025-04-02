@@ -1,0 +1,320 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickCart - {% block title %}Two-Factor Authentication{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 100%;
+            padding: 30px;
+            border: 1px solid #007BFF;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .dark-mode .container {
+            background-color: #2d2d2d;
+            border-color: #404040;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007BFF;
+            margin-bottom: 30px;
+        }
+
+        .dark-mode h1 {
+            color: #3a9fff;
+        }
+
+        .error-box {
+            color: #dc3545;
+            margin-bottom: 15px;
+            border: 1px solid #dc3545;
+            padding: 10px;
+            background-color: #ffe6e6;
+            border-radius: 5px;
+        }
+
+        .dark-mode .error-box {
+            background-color: #3d2525;
+            border-color: #dc3545;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .dark-mode label {
+            color: #ffffff;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="tel"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s, background-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        .dark-mode input[type="text"],
+        .dark-mode input[type="number"],
+        .dark-mode input[type="tel"],
+        .dark-mode input[type="email"],
+        .dark-mode input[type="password"] {
+            background-color: #363636;
+            border-color: #404040;
+            color: #ffffff;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="tel"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        .dark-mode input[type="text"]:focus,
+        .dark-mode input[type="number"]:focus,
+        .dark-mode input[type="tel"]:focus,
+        .dark-mode input[type="email"]:focus,
+        .dark-mode input[type="password"]:focus {
+            border-color: #3a9fff;
+        }
+
+        button,
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.2em;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover,
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .help-text {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .dark-mode .help-text {
+            color: #a0a0a0;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 5px;
+            right: 5px;
+            padding: 3px 6px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 12px;
+            z-index: 1000;
+            width: auto;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .dark-mode .theme-toggle {
+            background-color: #666;
+        }
+
+        .back-button,
+        .cancel-link {
+            display: inline-block;
+            padding: 12px;
+            background-color: #007BFF;
+            color: white !important;
+            border-radius: 5px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+            width: 100%;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover,
+        .cancel-link:hover {
+            background-color: #0056b3;
+        }
+
+        .cancel-link {
+            background-color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .cancel-link:hover {
+            background-color: #5a6268;
+        }
+
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .messages li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .messages .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .dark-mode .messages .success {
+            background-color: #1e3b2c;
+            color: #8fd4a4;
+            border-color: #2d5a3f;
+        }
+
+        .messages .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .dark-mode .messages .error {
+            background-color: #3d2525;
+            color: #e6a5a5;
+            border-color: #5a2d2d;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button-group button,
+        .button-group a {
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="{% if request.session.dark_mode %}dark-mode{% endif %}">
+    <button class="theme-toggle" onclick="toggleDarkMode()">🌓</button>
+    
+    <div class="container">
+        {% block content %}
+            <h1>{{ wizard.steps.current }}</h1>
+            
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ wizard.management_form }}
+                {{ wizard.form.non_field_errors }}
+                
+                {% block form_content %}
+                    {% for field in wizard.form %}
+                        <div class="form-group">
+                            {{ field.errors }}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <p class="help-text">{{ field.help_text }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% endblock %}
+
+                <div class="button-group">
+                    {% if wizard.steps.prev %}
+                        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="back-button">{% trans "Back" %}</button>
+                    {% endif %}
+
+                    <button type="submit" class="next-button">{% trans "Next" %}</button>
+
+                    {% if wizard.steps.current != "auth" %}
+                        <a href="{% url 'homepage_url' %}" class="cancel-link">{% trans "Cancel" %}</a>
+                    {% endif %}
+                </div>
+            </form>
+        {% endblock %}
+    </div>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+
+            fetch("{% url 'toggle_dark_mode' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                }
+            }).catch(error => console.error("Error toggling Dark Mode:", error));
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const darkModeEnabled = localStorage.getItem('darkMode') === 'true' || "{{ request.session.dark_mode }}" === "True";
+            if (darkModeEnabled) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+    </script>
+</body>
+</html> 

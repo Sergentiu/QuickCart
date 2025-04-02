@@ -1,0 +1,13 @@
+{
+  "0": "affirm",
+  "1": "ask_product_details",
+  "2": "ask_product_price",
+  "3": "bot_challenge",
+  "4": "check_order_status",
+  "5": "deny",
+  "6": "fetch_product_list",
+  "7": "goodbye",
+  "8": "greet",
+  "9": "mood_great",
+  "10": "mood_unhappy"
+}

@@ -1,0 +1,7 @@
+Hello {{ user.username }},
+
+Thank you for signing up for our site. Please click the following link to activate your account:
+
+{{site}}/accounts/activate/{{activation_key}}/
+
+If you didn't sign up for this account, please ignore this email.

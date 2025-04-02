@@ -1,0 +1,65 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - ask_product_price
+  - ask_product_details
+  - check_order_status
+  - fetch_product_list
+  - bot_challenge
+  - mood_great
+  - mood_unhappy
+  - ask_faq
+  - ask_policies
+
+entities:
+  - product_name
+  - order_id
+
+slots:
+  product_name:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: product_name
+
+  order_id:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: order_id
+
+responses:
+  utter_greet:
+    - text: "Hey! How can I help you?"
+
+  utter_goodbye:
+    - text: "Bye!"
+
+  utter_happy:
+    - text: "Great, carry on!"
+
+  utter_cheer_up:
+    - text: "Here is something to cheer you up:"
+      image: "https://i.imgur.com/nGF1K8f.jpg"
+
+  utter_did_that_help:
+    - text: "Did that help you?"
+
+  utter_iamabot:
+    - text: "I am a bot, powered by Rasa."
+
+actions:
+  - action_get_product_price
+  - action_get_product_details
+  - action_check_order_status
+  - action_fetch_product_names
+  - action_get_faq
+  - action_get_policies
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

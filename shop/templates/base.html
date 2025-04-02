@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickCart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+            color: #000;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #007BFF;
+            padding: 15px 20px;
+            color: white;
+        }
+
+        .dark-mode header {
+            background-color: #1a1a1a;
+        }
+
+        .nav-items {
+            display: flex;
+            flex: 1;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            transition: background-color 0.3s;
+        }
+
+        header a i {
+            color: white !important;
+        }
+
+        header a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+
+        header a.active {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+
+        header a.active i {
+            color: white !important;
+        }
+
+        /* Hamburger Menu Styling */
+        .hamburger {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 24px;
+            margin-right: 20px;
+        }
+
+        .bar {
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .hamburger.active .bar:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active .bar:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Dropdown Menu */
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            z-index: 100;
+            padding: 10px;
+            width: 200px;
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .dropdown a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dark-mode .dropdown {
+            background-color: #2d2d2d;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .dark-mode .dropdown a {
+            color: #ffffff;
+        }
+
+        .dark-mode .dropdown a:hover {
+            background-color: #404040;
+        }
+
+        .dropdown.active {
+            display: block;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #carticon {
+            position: relative;
+            display: inline-block;
+        }
+
+        #prodcount {
+            position: absolute;
+            right: -8px;
+            top: -8px;
+            background-color: #ff0000;
+            color: #ffffff;
+            height: 18px;
+            width: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="{% if request.session.dark_mode %}dark-mode{% endif %}">
+    
+    <header>
+        <div class="hamburger" onclick="toggleMenu()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        
+        <div class="nav-items">
+            <a href="{% url 'homepage_url' %}" class="nav-link">
+                <i class="fa fa-home"></i>
+            </a>
+            <a href="{% url 'shop_url' %}" class="nav-link">
+                <i class="fa fa-shopping-bag"></i>
+            </a>
+            <a href="{% url 'cart_url' %}" class="nav-link" id="carticon">
+                <i class="fa fa-shopping-cart"></i>
+                {% if request.session.cart %}
+                <span id="prodcount">{{ request.session.cart|length }}</span>
+                {% endif %}
+            </a>
+            <a href="{% url 'profile_url' %}" class="nav-link">
+                <i class="fa fa-user"></i>
+            </a>
+            {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}?next={% url 'homepage_url' %}" method="post" style="margin: 0; display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="nav-link" style="background: none; border: none; cursor: pointer; color: white; padding: 10px 15px; transition: background-color 0.3s; font-size: inherit;">
+                    <i class="fa fa-sign-out"></i>
+                </button>
+            </form>
+            {% else %}
+            <a href="{% url 'django_registration_register' %}" class="nav-link">
+                <i class="fa fa-user-plus"></i>
+            </a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Dropdown menu with links -->
+    <div class="dropdown" id="dropdown-menu">
+        <a href="{% url 'shop_url' %}">Shop Us</a>
+        <a href="{% url 'homepage_url' %}">About Us</a>
+        <a href="{% url 'chat_page_url' %}">Chat Bot</a>
+    </div>
+
+    {% block main %}
+    {% endblock main %}
+
+    <script>
+        function toggleMenu() {
+            var dropdown = document.getElementById("dropdown-menu");
+            var hamburger = document.querySelector(".hamburger");
+            
+            dropdown.classList.toggle("active");
+            hamburger.classList.toggle("active");
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var links = document.querySelectorAll(".nav-link");
+            var currentUrl = window.location.href;
+
+            links.forEach(function (link) {
+                if (link.href === currentUrl) {
+                    link.classList.add("active");
+                }
+            });
+
+            // Check localStorage for dark mode preference
+            var darkModeEnabled = localStorage.getItem('darkMode') === 'true' || "{{ request.session.dark_mode }}" === "True";
+            if (darkModeEnabled) {
+                document.body.classList.add("dark-mode");
+                localStorage.setItem('darkMode', 'true');
+            }
+
+            var darkModeButton = document.getElementById("darkModeToggle");
+            if (darkModeButton) {
+                darkModeButton.addEventListener("click", function () {
+                    fetch("{% url 'toggle_dark_mode' %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.dark_mode) {
+                            document.body.classList.add("dark-mode");
+                            localStorage.setItem('darkMode', 'true');
+                        } else {
+                            document.body.classList.remove("dark-mode");
+                            localStorage.setItem('darkMode', 'false');
+                        }
+                    })
+                    .catch(error => console.error("Error toggling Dark Mode:", error));
+                });
+            }
+        });
+    </script>
+</body>
+</html>

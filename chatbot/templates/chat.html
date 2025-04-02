@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<div class="chat-container" style="width: 80%; max-width: 600px; margin: 20px auto; padding: 15px; background-color: white; border: 1px solid #007BFF; border-radius: 8px;">
+    <h2 style="color: #007BFF; text-align: center;">Chat Bot</h2>
+
+    <!-- Chatbox with Auto-scroll -->
+    <div id="chatbox" style="height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background-color: #f9f9f9;">
+        {% for message in history %}
+            <div class="message {{ message.sender }}" style="padding: 5px; border-radius: 5px; margin-bottom: 5px; background-color: {% if message.sender == 'bot' %}#e9ecef{% else %}#007BFF; color: white{% endif %}; text-align: {% if message.sender == 'bot' %}left{% else %}right{% endif %};">
+                {{ message.message }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div style="margin-top: 10px; display: flex;">
+        <input type="text" id="userInput" placeholder="Type your message..." style="flex: 1; padding: 8px;" onkeydown="handleKeyPress(event)">
+        <button onclick="sendMessage()" style="padding: 8px 15px; background-color: #007BFF; color: white; border: none; cursor: pointer;">Send</button>
+    </div>
+</div>
+
+<style>
+    .dark-mode .chat-container {
+        background-color: #121212 !important;
+        color: #ffffff !important;
+        border-color: #333 !important;
+    }
+
+    .dark-mode #chatbox {
+        background-color: #1e1e1e !important;
+        border-color: #333 !important;
+    }
+
+    .dark-mode .message.bot {
+        background-color: #333 !important;
+        color: white !important;
+    }
+
+    .dark-mode .message.user {
+        background-color: #007BFF !important;
+        color: white !important;
+    }
+
+    .dark-mode input {
+        background-color: #222 !important;
+        color: white !important;
+        border-color: #444 !important;
+    }
+
+    .dark-mode button {
+        background-color: #007BFF !important;
+        color: white !important;
+    }
+</style>
+
+<script>
+function getCSRFToken() {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith('csrftoken=')) {
+            return cookie.split('=')[1];
+        }
+    }
+    return '';
+}
+
+function handleKeyPress(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+        event.preventDefault();
+    }
+}
+
+// Function to scroll chat to the bottom
+function scrollToBottom() {
+    var chatbox = document.getElementById("chatbox");
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+// Scroll to bottom when page loads
+window.onload = function() {
+    scrollToBottom();
+};
+
+function sendMessage() {
+    const input = document.getElementById("userInput");
+    const message = input.value.trim();
+    if (!message) return;
+
+    const chatbox = document.getElementById("chatbox");
+    
+    // Add user message to chatbox and scroll immediately
+    chatbox.innerHTML += `<div class="message user" style="background-color: #007BFF; color: white; padding: 5px; border-radius: 5px; text-align: right; margin-top: 5px;">${message}</div>`;
+    scrollToBottom();
+
+    fetch("{% url 'process_message' %}", {
+        method: "POST",
+        body: JSON.stringify({ message }),
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        chatbox.innerHTML += `<div class="message bot" style="background-color: #e9ecef; padding: 5px; border-radius: 5px; margin-top: 5px;">${data.response}</div>`;
+        scrollToBottom();
+    });
+
+    input.value = "";
+}
+</script>
+{% endblock main %}

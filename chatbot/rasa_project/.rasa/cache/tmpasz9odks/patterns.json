@@ -1,0 +1,6 @@
+[
+  {
+    "name": "product_name",
+    "pattern": "(\\bT\\-Shirt\\b|\\bJeans\\b|\\bUnderwear\\b|\\bSocks\\b|\\bJordan\\ 4\\ Retro\\b|\\bWashing\\ Machine\\b|\\bFridge\\b|\\bMicrowave\\b|\\bBlender\\b|\\bSpark\\ Plug\\b|\\bMotor\\ Oil\\b|\\bBurger\\b|\\bPizza\\b|\\bCroissant\\b|\\bBucket\\b|\\bPen\\b|\\bAir\\ Force\\ 1\\b|\\bTire\\b)"
+  }
+]

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+    <div style="text-align: center; margin: 20px;">
+        <h1 style="color: #007BFF;">Category Details</h1>
+
+        <h2 style="font-size: 2em; margin: 10px 0;">{{ category.name }}</h2>
+        <div style="font-size: 1.2em; color: #555; margin-bottom: 20px;">{{ category.description }}</div>
+
+        <ol style="list-style-type: none; padding: 0; display: flex; flex-direction: column; align-items: center;">
+            {% for prod in products %}
+                <li style="margin: 10px; border: 1px solid #007BFF; border-radius: 8px; width: 300px; transition: transform 0.3s; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+                    <a href="{{ prod.get_absolute_url }}" style="text-decoration: none; color: inherit; display: block; padding: 15px; text-align: center;">
+                        <h3 style="margin: 0; font-size: 1.5em;">{{ prod.name }}</h3>
+                    </a>
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+
+    <style>
+        ol li:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Darker shadow on hover */
+        }
+    </style>
+{% endblock main %}

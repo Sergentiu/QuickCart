@@ -1,0 +1,6 @@
+venv\Scripts\Activate.ps1 - activate venv
+rasa train - train chatbot
+rasa run actions - activate actions
+rasa run --enable-api --cors "*" - run rasa chatbot
+python manage.py runserver - start django server
+pip install -r requirements.txt - install all dependencies

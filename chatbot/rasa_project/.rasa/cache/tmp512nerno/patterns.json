@@ -1,0 +1,6 @@
+[
+  {
+    "name": "product_name",
+    "pattern": "(\\bdata/lookups/product_names\\.txt\\b)"
+  }
+]

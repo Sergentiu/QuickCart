@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+    <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #007BFF; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <h1 style="text-align: center; color: #007BFF;">Welcome to Your Profile Page</h1>
+        
+        <p style="font-size: 1.2em;">Username: <strong>{{ user.username }}</strong></p>
+        <p style="font-size: 1.2em;">Email: <strong>{{ user.email }}</strong></p>
+        
+        {% if user.first_name or user.last_name %}
+            <p style="font-size: 1.2em;">Your full name: <strong>{{ user.first_name }} {{ user.last_name }}</strong></p>
+        {% endif %}
+
+        <div style="margin: 20px 0; text-align: center;">
+            <a href="{% url 'change_username' %}" style="text-decoration: none;">
+                <button style="margin: 5px; padding: 10px 15px; font-size: 1em; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
+                    Change Username
+                </button>
+            </a>
+            <a href="{% url 'change_email' %}" style="text-decoration: none;">
+                <button style="margin: 5px; padding: 10px 15px; font-size: 1em; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
+                    Change Email
+                </button>
+            </a>
+            <a href="{% url 'change_password' %}" style="text-decoration: none;">
+                <button style="margin: 5px; padding: 10px 15px; font-size: 1em; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
+                    Change Password
+                </button>
+            </a>
+
+            <!-- NEW: Enable 2FA Button -->
+            <a href="http://127.0.0.1:8000/account/2fa/account/two_factor/" style="text-decoration: none;">
+                <button style="margin: 5px; padding: 10px 15px; font-size: 1em; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
+                    Enable 2FA
+                </button>
+            </a>
+        </div>
+
+        <h2 style="text-align: center; color: #007BFF; margin-top: 30px;">Order History</h2>
+        
+        <div style="margin-top: 20px; text-align: left;">
+            {% if orders %}
+                <ul style="list-style: none; padding: 0;">
+                    {% for order in orders %}
+                        <li style="padding: 10px; border: 1px solid #007BFF; border-radius: 5px; margin-bottom: 10px;">
+                            <strong>Order ID:</strong> {{ order.id }}<br>
+                            <strong>Date:</strong> {{ order.date }}<br>
+                            <strong>Total:</strong> ${{ order.total }}<br>
+                            <strong>Status:</strong> {{ order.status }}<br>
+                            <strong>Items:</strong>
+                            <ul style="list-style: none; padding-left: 20px;">
+                                {% if order.items.count > 0 %}
+                                    {% for item in order.items.all %}
+                                        <li>
+                                            {{ item.product.name }} - Quantity: {{ item.quantity }} - Price: ${{ item.price }}
+                                        </li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li>No items found for this order.</li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No orders found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+{% endblock main %}

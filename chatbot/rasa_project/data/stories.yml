@@ -1,0 +1,50 @@
+version: "3.1"
+
+stories:
+
+- story: happy path
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: mood_great
+    - action: utter_happy
+
+- story: sad path 1
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: mood_unhappy
+    - action: utter_cheer_up
+    - action: utter_did_that_help
+    - intent: affirm
+    - action: utter_happy
+
+- story: sad path 2
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: mood_unhappy
+    - action: utter_cheer_up
+    - action: utter_did_that_help
+    - intent: deny
+    - action: utter_goodbye
+
+- story: user asks product price
+  steps:
+    - intent: ask_product_price
+    - action: action_get_product_price
+
+- story: user asks product details
+  steps:
+    - intent: ask_product_details
+    - action: action_get_product_details
+
+- story: user checks order status
+  steps:
+    - intent: check_order_status
+    - action: action_check_order_status
+
+- story: user asks for product list
+  steps:
+    - intent: fetch_product_list
+    - action: action_fetch_product_names

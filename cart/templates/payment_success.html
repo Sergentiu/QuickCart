@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div style="text-align: center; margin: 50px auto; max-width: 600px;">
+        <h1 style="color: #28a745; margin-bottom: 20px;">Payment Successful!</h1>
+        <p style="color: #555; font-size: 1.2em; margin-bottom: 30px;">Thank you for your purchase. Your order has been confirmed.</p>
+        <a href="{% url 'shop_url' %}">
+            <button style="padding: 10px 20px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">Continue Shopping</button>
+        </a>
+    </div>
+
+    <style>
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .dark-mode p[style*="color: #555"] {
+            color: #fff !important;
+        }
+
+        .dark-mode h1[style*="color: #28a745"] {
+            color: #28a745 !important;
+        }
+    </style>
+{% endblock main %}

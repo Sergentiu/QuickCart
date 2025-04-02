@@ -1,0 +1,6 @@
+[
+  {
+    "name": "product_name",
+    "pattern": "(product_names\\.txt)"
+  }
+]

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block main %}
+<script src="https://js.stripe.com/v3/"></script>
+
+<div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #007BFF; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <form action="{% url 'checkout_url' %}" method="POST" id="payment-form">
+        {% csrf_token %}
+        
+        <!-- Total Price -->
+        <h2 style="text-align: center; color: #007BFF;">Total: ${{ total_price }}</h2>
+
+        <!-- Section 1: Shipping Details -->
+        <h3 style="color: #007BFF; border-bottom: 1px solid #007BFF; padding-bottom: 10px;">Shipping Details</h3>
+        <div style="margin-bottom: 20px;">
+            <label for="name" style="font-weight: bold; color: #333;">Full Name</label>
+            <input type="text" id="name" name="name" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ced4da; border-radius: 5px;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="address" style="font-weight: bold; color: #333;">Address</label>
+            <input type="text" id="address" name="address" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ced4da; border-radius: 5px;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="city" style="font-weight: bold; color: #333;">City</label>
+            <input type="text" id="city" name="city" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ced4da; border-radius: 5px;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="zip" style="font-weight: bold; color: #333;">ZIP Code</label>
+            <input type="text" id="zip" name="zip" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ced4da; border-radius: 5px;">
+        </div>
+
+        <!-- Section 2: Credit Card Details -->
+        <h3 style="color: #007BFF; border-bottom: 1px solid #007BFF; padding-bottom: 10px;">Payment Details</h3>
+        
+        <div style="margin-bottom: 20px;">
+            <label for="card-name" style="font-weight: bold; color: #333;">Name on Card</label>
+            <input type="text" id="card-name" name="card-name" required style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ced4da; border-radius: 5px;">
+        </div>
+
+        <div class="form-row" style="margin-bottom: 20px;">
+            <label for="card-element" style="font-weight: bold; color: #333;">Credit or Debit Card</label>
+            <div id="card-element" style="border: 1px solid #ced4da; border-radius: 4px; padding: 10px; margin-top: 5px; background-color: #ffffff;"></div>
+            <div id="card-errors" role="alert" style="color: #fa755a; margin-top: 5px;"></div>
+        </div>
+
+        <button type="submit" style="width: 100%; padding: 10px; font-size: 1.2em; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
+            Submit Payment
+        </button>
+    </form>
+</div>
+
+<script>
+    // Initialize Stripe with the publishable key
+    var stripe = Stripe('{{ stripe_publishable_key }}');
+    
+    // Create an instance of Stripe Elements
+    var elements = stripe.elements();
+
+    // Define custom styling for the Stripe card input field
+    var style = {
+        base: {
+            color: '#333333',
+            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+            fontSmoothing: 'antialiased',
+            fontSize: '16px',
+            '::placeholder': {
+                color: '#aab7c4'
+            },
+            backgroundColor: '#ffffff'
+        },
+        invalid: {
+            color: '#fa755a',
+            iconColor: '#fa755a'
+        }
+    };
+
+    // Create a card element and apply the custom styles
+    var card = elements.create('card', {style: style});
+    
+    // Mount the card element to the div with id 'card-element'
+    card.mount('#card-element');
+
+    // Listen for changes on the card element and display error messages if any
+    card.on('change', function(event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;  // Show error message
+        } else {
+            displayError.textContent = '';  // Clear error message
+        }
+    });
+
+    // Handle form submission and create a token with the card information
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();  // Prevent the form from submitting the default way
+
+        // Create a token using the card information
+        stripe.createToken(card).then(function(result) {
+            if (result.error) {
+                // Display the error if there's an issue with the card
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                // If successful, handle the token
+                stripeTokenHandler(result.token);
+            }
+        });
+    });
+
+    // Handle the received token and submit the form with the token
+    function stripeTokenHandler(token) {
+        var form = document.getElementById('payment-form');
+        
+        // Create a hidden input field to store the token
+        var hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', 'stripeToken');
+        hiddenInput.setAttribute('value', token.id);  // Assign the token ID to the hidden input
+        
+        // Append the hidden input to the form
+        form.appendChild(hiddenInput);
+
+        // Submit the form with the token
+        form.submit();
+    }
+</script>
+{% endblock main %}

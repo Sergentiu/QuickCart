@@ -1,0 +1,8 @@
+{
+  "0": "affirm",
+  "1": "ask_product_price",
+  "2": "check_order_status",
+  "3": "deny",
+  "4": "goodbye",
+  "5": "greet"
+}
