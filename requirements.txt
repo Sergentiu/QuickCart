@@ -1,5 +1,9 @@
 # Core ML packages
+<<<<<<< HEAD
 numpy==1.23.5
+=======
+numpy==1.24.3
+>>>>>>> 7595652 (Enhanced Security)
 pandas==2.2.1
 scikit-learn==1.1.3
 
@@ -42,7 +46,11 @@ Faker==23.2.1
 
 # Task queue and caching
 celery==5.3.6
+<<<<<<< HEAD
 redis==4.6.0
+=======
+redis==4.5.5
+>>>>>>> 7595652 (Enhanced Security)
 flower==2.0.1
 
 # Web server and performance

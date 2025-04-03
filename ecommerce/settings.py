@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-nt7y!5ul%#j!ero!0(1jyze9cqnn&msqrxl(*p^2r@yqm@)#20'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-nt7y!5ul%#j!ero!0(1jyze9cqnn&msqrxl(*p^2r@yqm@)#20')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 # Application definition
@@ -157,14 +162,37 @@ LOGOUT_REDIRECT_URL = 'http://127.0.0.1:8000/accounts/login/?next=/accounts/prof
 
 # SMTP
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'sergiu.stoichitescu@gmail.com'
-EMAIL_HOST_PASSWORD = 'efcaozwilexqbpmp'
-DEFAULT_FROM_EMAIL = 'sergiu.stoichitescu@gmail.com'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'sergiu.stoichitescu@gmail.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'efcaozwilexqbpmp')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'sergiu.stoichitescu@gmail.com')
 ACCOUNT_ACTIVATION_DAYS = 3
 
 # Stripe
-STRIPE_PUBLISHABLE_KEY = 'pk_test_51Q5WYKLFTYVa6FCxzNuw2TVLZiaIUcumsqTBIqdAdWCFZVUhOIzEQ1UlZqqtkTbxsOb8ArDEipeqfV5i0TWFSTiZ00YKBTNawY'
-STRIPE_SECRET_KEY = 'sk_test_51Q5WYKLFTYVa6FCxOmJG4jvtX9BaZKX2Zc7lJ624q55VyISAG8csOUSJna5INRQGDtpKf5ZzyEvta1M5kyLtGLBl00N3DyIXQO'
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY', 'pk_test_51Q5WYKLFTYVa6FCxzNuw2TVLZiaIUcumsqTBIqdAdWCFZVUhOIzEQ1UlZqqtkTbxsOb8ArDEipeqfV5i0TWFSTiZ00YKBTNawY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_51Q5WYKLFTYVa6FCxOmJG4jvtX9BaZKX2Zc7lJ624q55VyISAG8csOUSJna5INRQGDtpKf5ZzyEvta1M5kyLtGLBl00N3DyIXQO')
+
+# Security Settings
+SECURE_SSL_REDIRECT = not DEBUG  # Redirect all non-HTTPS requests to HTTPS
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+
+# Session Security
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Two-Factor Authentication Settings
+TWO_FACTOR_REMEMBER_COOKIE_AGE = 30 * 24 * 60 * 60  # 30 days
+TWO_FACTOR_REMEMBER_COOKIE_SECURE = not DEBUG
+TWO_FACTOR_REMEMBER_COOKIE_HTTPONLY = True
+TWO_FACTOR_REMEMBER_COOKIE_SAMESITE = 'Lax'
