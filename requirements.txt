@@ -1,5 +1,5 @@
 # Core ML packages
-numpy==1.24.3
+numpy==1.23.5
 pandas==2.2.1
 scikit-learn==1.1.3
 
@@ -13,7 +13,7 @@ django-simple-history==3.4.0
 django-cleanup==8.1.0
 django-compressor==4.4
 django-sass-processor==1.4
-django-redis==5.4.0
+django-redis==5.3.0
 django-allauth==0.61.1
 django-filter==23.5
 django-crispy-forms==2.1
@@ -24,7 +24,7 @@ django-debug-toolbar==4.3.0
 django-extensions==3.2.3
 
 # Image processing and payment
-Pillow==10.2.0
+Pillow==11.1.0
 stripe==7.11.0
 
 # NLP and chatbot
@@ -42,24 +42,24 @@ Faker==23.2.1
 
 # Task queue and caching
 celery==5.3.6
-redis==4.5.5
+redis==4.6.0
 flower==2.0.1
 
 # Web server and performance
 gunicorn==21.2.0
 whitenoise==6.6.0
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.10
 
 # Real-time features
 channels==4.0.0
-channels-redis==4.2.0
+channels-redis==4.1.0
 daphne==4.1.0
 uvicorn==0.27.1
 
 # Utility packages
 python-dotenv==1.0.1
-boto3==1.34.34
-ipython==8.22.2
+boto3==1.37.26
+ipython==8.0.0
 requests==2.31.0
 python-dateutil==2.8.2
 libsass==0.22.0
