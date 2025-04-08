@@ -2,71 +2,353 @@
 {% load static %}
 
 {% block main %}
-    <div style="text-align: center; margin: 20px;" class="{% if dark_mode %}dark-mode{% endif %}">
-        <h1 style="color: #007BFF;">Product Details</h1>
-
-        <h2 style="font-size: 2em; margin: 10px 0;">{{ product.name }}</h2>
-        <div style="margin: 10px 0; font-size: 1.2em; color: #555;">{{ product.description }}</div>
-        <div style="font-size: 1.5em; color: #28a745;">Price: {{ product.price }} $</div>
-        <div style="margin: 10px 0;">Category: <a href="{{ product.category.get_absolute_url }}" style="color: #007BFF; text-decoration: none;">{{ product.category }}</a></div>
+<div class="product-container {% if dark_mode %}dark-mode{% endif %}">
+    <div class="product-grid">
+        <div class="product-image-section">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% endif %}
+        </div>
         
-        <div style="margin: 20px 0;">
-            <img src="{{ product.image.url }}" style="width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);" alt="{{ product.name }}">
-        </div>
-
-        <form action="{% url 'add_to_cart_url' product.id %}" method="post" style="margin-top: 20px;">
-            {% csrf_token %}
-            {{ add_form }}
-            <input type="submit" value="Add To Cart" style="padding: 10px 20px; font-size: 1.2em; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
-        </form>
-
-        <!-- Content-Based Recommended Products Section -->
-        <h2 style="font-size: 1.8em; margin: 30px 0 10px; color: #007BFF;">Recommended Products</h2>
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 20px;">
-            {% for rec_product in content_recommended_products %}
-                <div style="width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-                    <a href="{{ rec_product.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-                        <img src="{{ rec_product.image.url }}" style="width: 100%; border-radius: 4px;" alt="{{ rec_product.name }}">
-                        <div style="font-size: 1.1em; margin: 5px 0;">{{ rec_product.name }}</div>
-                        <div style="color: #28a745;">${{ rec_product.price }}</div>
-                    </a>
-                </div>
-            {% empty %}
-                <p style="font-size: 1.2em; color: #555;">No recommendations available at this time.</p>
-            {% endfor %}
-        </div>
-
-        <!-- Collaborative Filtering Recommended Products Section -->
-        <h2 style="font-size: 1.8em; margin: 30px 0 10px; color: #007BFF;">You Might Also Like (Based on Your Orders)</h2>
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 20px;">
-            {% for rec_product in collab_recommended_products %}
-                <div style="width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-                    <a href="{{ rec_product.get_absolute_url }}" style="text-decoration: none; color: inherit;">
-                        <img src="{{ rec_product.image.url }}" style="width: 100%; border-radius: 4px;" alt="{{ rec_product.name }}">
-                        <div style="font-size: 1.1em; margin: 5px 0;">{{ rec_product.name }}</div>
-                        <div style="color: #28a745;">${{ rec_product.price }}</div>
-                    </a>
-                </div>
-            {% empty %}
-                <p style="font-size: 1.2em; color: #555;">No personalized recommendations yet—start shopping!</p>
-            {% endfor %}
+        <div class="product-info-section">
+            <h1 class="product-title">{{ product.name }}</h1>
+            <p class="product-description">{{ product.description }}</p>
+            <div class="product-meta">
+                <span class="product-price">${{ product.price|floatformat:2 }}</span>
+                <span class="product-category">Category: {{ product.category.name }}</span>
+            </div>
+            
+            <div class="product-actions">
+                <form action="{% url 'add_to_cart_url' product.id %}" method="post" class="add-to-cart-form">
+                    {% csrf_token %}
+                    <div class="quantity-selector">
+                        {{ add_form }}
+                    </div>
+                    <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+                </form>
+                <a href="{% url 'product_list' %}" class="back-btn">Back to Products</a>
+            </div>
         </div>
     </div>
 
-    <style>
-        input[type="submit"]:hover {
-            background-color: #0056b3; /* Darker blue on hover */
+    {% if recommended_products %}
+    <div class="recommendations-section">
+        <h2>You Might Also Like</h2>
+        <div class="recommendations-grid">
+            {% for rec in recommended_products %}
+                <div class="recommendation-card">
+                    <a href="{% url 'product_detail' rec.slug %}">
+                        {% if rec.image %}
+                            <img src="{{ rec.image.url }}" alt="{{ rec.name }}">
+                        {% endif %}
+                        <div class="recommendation-info">
+                            <h3>{{ rec.name }}</h3>
+                            <p class="recommendation-price">${{ rec.price|floatformat:2 }}</p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if popular_products %}
+    <div class="popular-section">
+        <h2>Popular in Your Interests</h2>
+        <div class="recommendations-grid">
+            {% for prod in popular_products %}
+                <div class="recommendation-card">
+                    <a href="{% url 'product_detail' prod.slug %}">
+                        {% if prod.image %}
+                            <img src="{{ prod.image.url }}" alt="{{ prod.name }}">
+                        {% endif %}
+                        <div class="recommendation-info">
+                            <h3>{{ prod.name }}</h3>
+                            <p class="recommendation-price">${{ prod.price|floatformat:2 }}</p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if recent_interests %}
+    <div class="recent-interests-section">
+        <h2>Based on Your Recent Activity</h2>
+        <div class="interests-summary">
+            {% for category, score in recent_interests.items %}
+                <div class="interest-tag">
+                    <span class="category-name">{{ category }}</span>
+                    <span class="interest-score">{{ score|floatformat:1 }}</span>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="recommendations-grid">
+            {% for prod in behavior_based_products %}
+                <div class="recommendation-card">
+                    <a href="{% url 'product_detail' prod.slug %}">
+                        {% if prod.image %}
+                            <img src="{{ prod.image.url }}" alt="{{ prod.name }}">
+                        {% endif %}
+                        <div class="recommendation-info">
+                            <h3>{{ prod.name }}</h3>
+                            <p class="recommendation-price">${{ prod.price|floatformat:2 }}</p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .product-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .product-image-section {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .product-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-info-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .product-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-color, #333);
+    }
+
+    .product-description {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: var(--text-secondary, #666);
+    }
+
+    .product-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1rem 0;
+    }
+
+    .product-price {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--primary-color, #007BFF);
+    }
+
+    .product-category {
+        font-size: 1.1rem;
+        color: var(--text-secondary, #666);
+    }
+
+    .product-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .add-to-cart-form {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .quantity-selector {
+        flex: 1;
+    }
+
+    .quantity-selector input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid var(--border-color, #ddd);
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .add-to-cart-btn, .back-btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .add-to-cart-btn {
+        background-color: var(--primary-color, #007BFF);
+        color: white;
+    }
+
+    .back-btn {
+        background-color: var(--secondary-color, #6c757d);
+        color: white;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .add-to-cart-btn:hover {
+        background-color: var(--primary-dark, #0056b3);
+        transform: translateY(-2px);
+    }
+
+    .back-btn:hover {
+        background-color: var(--secondary-dark, #545b62);
+        transform: translateY(-2px);
+    }
+
+    .recommendations-section, .popular-section {
+        margin-top: 4rem;
+    }
+
+    .recommendations-section h2, .popular-section h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: var(--text-color, #333);
+    }
+
+    .recommendations-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 2rem;
+    }
+
+    .recommendation-card {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .recommendation-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .recommendation-card a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .recommendation-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .recommendation-info {
+        padding: 1rem;
+    }
+
+    .recommendation-info h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .recommendation-price {
+        color: var(--primary-color, #007BFF);
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    /* Dark mode styles */
+    .dark-mode {
+        --text-color: #fff;
+        --text-secondary: #aaa;
+        --primary-color: #66b3ff;
+        --primary-dark: #3399ff;
+        --secondary-color: #495057;
+        --secondary-dark: #343a40;
+        --border-color: #444;
+        background-color: #1a1a1a;
+    }
+
+    .dark-mode .recommendation-card {
+        background-color: #2d2d2d;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .product-grid {
+            grid-template-columns: 1fr;
         }
-        .dark-mode {
-            background-color: #333;
-            color: #fff;
+
+        .product-title {
+            font-size: 2rem;
         }
-        .dark-mode a {
-            color: #66b3ff; /* Lighter blue for links in dark mode */
+
+        .recommendations-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         }
-        .dark-mode .recommended-product {
-            border-color: #555;
-            background-color: #333;
+    }
+
+    .recent-interests-section {
+        margin-top: 4rem;
+    }
+
+    .interests-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .interest-tag {
+        background-color: var(--primary-color, #007BFF);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .interest-tag .category-name {
+        font-weight: 500;
+    }
+
+    .interest-tag .interest-score {
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 0.2rem 0.5rem;
+        border-radius: 10px;
+        font-size: 0.8rem;
+    }
+
+    .dark-mode .interest-tag {
+        background-color: var(--primary-dark, #3399ff);
+    }
+
+    @media (max-width: 768px) {
+        .interests-summary {
+            justify-content: center;
         }
-    </style>
+    }
+</style>
 {% endblock main %}

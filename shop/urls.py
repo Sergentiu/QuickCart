@@ -3,14 +3,9 @@ from .views import *
 
 urlpatterns = [
     # Shop and Product Views
-    path("", product_list_view, name="shop_url"),
+    path("", product_list_view, name="product_list"),
     path("category/<slug>", category_details_view, name="category_details"),
-    path("<slug>", product_details_view, name="product_details"),
-
-    # API Endpoints
-    path("api/products", ProductListView.as_view(), name="api_products"),
-    path("api/products/details/<pk>", ProductDetailView.as_view(), name="api_product_details"),
-    path("api/products/create", ProductCreateView.as_view(), name="api_product_create"),
+    path("<slug>", product_details_view, name="product_detail"),
 
     # FAQ and Policies
     path("faq/", faq_page, name="faq_page"),
@@ -18,4 +13,9 @@ urlpatterns = [
 
     # Dark Mode Toggle
     path("toggle-dark-mode/", toggle_dark_mode, name="toggle_dark_mode"),
+
+    # API Endpoints
+    path("api/products", ProductListView.as_view(), name="api_products"),
+    path("api/products/details/<pk>", ProductDetailView.as_view(), name="api_product_details"),
+    path("api/products/create", ProductCreateView.as_view(), name="api_product_create"),
 ]

@@ -1,40 +1,84 @@
 {% extends "base.html" %}
 
 {% block main %}
-    <div id="main">
-        <h1 style="text-align: center; color: #007BFF;">Shop</h1>
+    <div id="main" class="main-container">
+        <h1 class="page-title">Shop</h1>
 
-        <ol style="list-style-type: none; padding: 0; display: flex; flex-wrap: wrap; justify-content: center;">
-            {% for prod in products %}
-                <li style="margin: 15px; border: 1px solid #007BFF; border-radius: 8px; overflow: hidden; width: 200px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); transition: transform 0.3s;">
-                    <a href="{{ prod.slug }}" style="text-decoration: none; color: inherit; display: block; padding: 10px; text-align: center;">
-                        <h2 style="font-size: 1.5em; margin: 0;">{{ prod.name }}</h2>
-                        <p style="color: #555;">{{ prod.description }}</p>
+        <!-- Browse by Category Section -->
+        <div class="section categories-section">
+            <h2 class="section-title">Browse by Category</h2>
+            <div class="categories-grid">
+                <a href="{% url 'product_list' %}" class="category-link">
+                    <div class="category-card">
+                        <span>All</span>
+                    </div>
+                </a>
+                {% for category in categories %}
+                    <a href="?category={{ category.slug }}" class="category-link">
+                        <div class="category-card">
+                            <span>{{ category.name }}</span>
+                        </div>
                     </a>
-                </li>
-            {% endfor %}
-        </ol>
+                {% endfor %}
+            </div>
+        </div>
 
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="{% url 'faq_page' %}" style="text-decoration: none;">
-                <button style="padding: 10px 20px; font-size: 1em; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                    View FAQs
-                </button>
-            </a>
-            <a href="{% url 'policies_page' %}" style="text-decoration: none; margin-left: 10px;">
-                <button style="padding: 10px 20px; font-size: 1em; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                    View Policies
-                </button>
-            </a>
-            <!-- Dark Mode Button -->
-            <button id="darkModeToggle" style="padding: 10px 20px; font-size: 1em; background-color: #333; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
-                Toggle Dark Mode
-            </button>
+        {% if user.is_authenticated and user_interests %}
+        <!-- Based on Your Interests Section -->
+        <div class="section interests-section">
+            <h2 class="section-title">Based on Your Interests</h2>
+            <div class="interests-grid">
+                {% for category, score in user_interests.items %}
+                    <div class="interest-card">
+                        <h3>{{ category }}</h3>
+                        <div class="interest-score">Interest Score: {{ score|floatformat:2 }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- All Products Section -->
+        <div class="products-grid">
+            {% for prod in products %}
+                <div class="product-card">
+                    <a href="{% url 'product_detail' prod.slug %}" class="product-link">
+                        {% if prod.image %}
+                            <div class="product-image">
+                                <img src="{{ prod.image.url }}" alt="{{ prod.name }}">
+                            </div>
+                        {% endif %}
+                        <div class="product-info">
+                            <h2 class="product-title">{{ prod.name }}</h2>
+                            <p class="product-description">{{ prod.description }}</p>
+                            <div class="product-footer">
+                                <span class="product-price">${{ prod.price|floatformat:2 }}</span>
+                                <span class="product-category">{{ prod.category.name }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="button-container">
+            <button onclick="handleFAQClick(event)" data-url="{% url 'faq_page' %}" class="nav-button">View FAQs</button>
+            <button onclick="handlePoliciesClick(event)" data-url="{% url 'policies_page' %}" class="nav-button">View Policies</button>
+            <button id="darkModeToggle" class="dark-mode-button">Toggle Dark Mode</button>
         </div>
 
         <script>
+            function handleFAQClick(event) {
+                window.location.href = event.target.dataset.url;
+                event.preventDefault();
+            }
+
+            function handlePoliciesClick(event) {
+                window.location.href = event.target.dataset.url;
+                event.preventDefault();
+            }
+
             document.addEventListener("DOMContentLoaded", function () {
-                // Check localStorage for dark mode preference
                 var darkModeEnabled = localStorage.getItem('darkMode') === 'true' || "{{ request.session.dark_mode }}" === "True";
                 if (darkModeEnabled) {
                     document.body.classList.add("dark-mode");
@@ -67,29 +111,282 @@
         </script>
 
         <style>
-            .dark-mode {
-                background-color: #121212 !important;
-                color: #ffffff !important;
+            .main-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+                min-height: 100vh;
             }
-            .dark-mode h1 {
-                color: #3a9fff !important;
+
+            .page-title {
+                text-align: center;
+                color: #007BFF;
+                font-size: 2.5em;
+                margin-bottom: 30px;
             }
-            .dark-mode a {
-                color: inherit !important;
+
+            .section {
+                margin: 40px 0;
             }
-            .dark-mode button:hover {
+
+            .section-title {
+                text-align: center;
+                color: #007BFF;
+                margin-bottom: 25px;
+                font-size: 1.8em;
+            }
+
+            /* Categories Section */
+            .categories-grid {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+                margin-bottom: 40px;
+            }
+
+            .category-link {
+                text-decoration: none;
+            }
+
+            .category-card {
+                padding: 15px 30px;
+                background-color: #f8f9fa;
+                border-radius: 20px;
+                transition: all 0.3s ease;
+                border: 2px solid transparent;
+            }
+
+            .category-card span {
+                color: #333;
+                font-weight: 500;
+            }
+
+            .category-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 15px rgba(0, 123, 255, 0.1);
+                border-color: #007BFF;
+            }
+
+            /* Interests Section */
+            .interests-grid {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 25px;
+            }
+
+            .interest-card {
+                width: 300px;
+                padding: 20px;
+                background-color: #f8f9fa;
+                border-radius: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+                transition: transform 0.3s ease;
+            }
+
+            .interest-card:hover {
+                transform: translateY(-3px);
+            }
+
+            .interest-card h3 {
+                color: #007BFF;
+                margin-bottom: 10px;
+            }
+
+            .interest-score {
+                color: #666;
+            }
+
+            /* Products Grid */
+            .products-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 30px;
+                padding: 20px 0;
+            }
+
+            .product-card {
+                border: 1px solid #e1e1e1;
+                border-radius: 12px;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                background-color: #ffffff;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            }
+
+            .product-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .product-link {
+                text-decoration: none;
+                color: inherit;
+            }
+
+            .product-image {
+                width: 100%;
+                height: 200px;
+                overflow: hidden;
+            }
+
+            .product-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+
+            .product-card:hover .product-image img {
+                transform: scale(1.05);
+            }
+
+            .product-info {
+                padding: 20px;
+            }
+
+            .product-title {
+                font-size: 1.3em;
+                margin: 0 0 10px 0;
+                color: #333;
+            }
+
+            .product-description {
+                color: #666;
+                margin: 0 0 15px 0;
+                font-size: 0.9em;
+                line-height: 1.5;
+            }
+
+            .product-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 15px;
+            }
+
+            .product-price {
+                font-weight: bold;
+                color: #007BFF;
+                font-size: 1.2em;
+            }
+
+            .product-category {
+                color: #666;
+                font-size: 0.9em;
+                padding: 4px 8px;
+                background-color: #f8f9fa;
+                border-radius: 4px;
+            }
+
+            /* Button Container */
+            .button-container {
+                text-align: center;
+                margin-top: 40px;
+                padding: 20px;
+            }
+
+            .button-container button {
+                padding: 12px 25px;
+                font-size: 1em;
+                background-color: #007BFF;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin: 0 10px;
+            }
+
+            .button-container button:hover {
                 background-color: #0056b3;
+                transform: translateY(-2px);
             }
-            .dark-mode li {
-                border-color: #404040 !important;
-                background-color: #2d2d2d !important;
+
+            .dark-mode-button {
+                background-color: #333 !important;
             }
-            .dark-mode p {
-                color: #ffffff !important;
+
+            /* Dark Mode Styles */
+            .dark-mode {
+                background-color: #121212;
+                color: #ffffff;
             }
-            /* Only target buttons within the main content, not in the header */
-            .dark-mode #main button {
-                background-color: #007BFF !important;
+
+            .dark-mode .main-container {
+                background-color: #121212;
+            }
+
+            .dark-mode .page-title,
+            .dark-mode .section-title {
+                color: #3a9fff;
+            }
+
+            .dark-mode .category-card {
+                background-color: #2d2d2d;
+                border-color: #404040;
+            }
+
+            .dark-mode .category-card:hover {
+                border-color: #3a9fff;
+                box-shadow: 0 8px 15px rgba(58, 159, 255, 0.1);
+            }
+
+            .dark-mode .category-card span {
+                color: #ffffff;
+            }
+
+            .dark-mode .interest-card {
+                background-color: #2d2d2d;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            .dark-mode .product-card {
+                background-color: #2d2d2d;
+                border-color: #404040;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            .dark-mode .product-title {
+                color: #ffffff;
+            }
+
+            .dark-mode .product-description {
+                color: #cccccc;
+            }
+
+            .dark-mode .product-category {
+                background-color: #404040;
+                color: #cccccc;
+            }
+
+            .dark-mode .product-price {
+                color: #3a9fff;
+            }
+
+            .dark-mode .button-container button {
+                background-color: #3a9fff;
+            }
+
+            .dark-mode .dark-mode-button {
+                background-color: #666 !important;
+            }
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .products-grid {
+                    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                    gap: 20px;
+                }
+
+                .category-card {
+                    padding: 10px 20px;
+                }
+
+                .button-container button {
+                    margin: 5px;
+                }
             }
         </style>
     </div>

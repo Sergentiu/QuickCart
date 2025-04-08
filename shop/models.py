@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -57,3 +58,29 @@ class Policy(models.Model):
     
     class Meta:
         verbose_name_plural = 'Policies'
+
+class UserBehavior(models.Model):
+    class InteractionType(models.TextChoices):
+        VIEW = 'view', 'Product View'
+        SEARCH = 'search', 'Product Search'
+        CART_ADD = 'cart_add', 'Added to Cart'
+        CART_REMOVE = 'cart_remove', 'Removed from Cart'
+        PURCHASE = 'purchase', 'Product Purchase'
+        RATING = 'rating', 'Product Rating'
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='behaviors')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='user_behaviors')
+    interaction_type = models.CharField(max_length=20, choices=InteractionType.choices)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    metadata = models.JSONField(default=dict, blank=True)  # For storing additional data like search terms, ratings, etc.
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user', 'timestamp']),
+            models.Index(fields=['product', 'timestamp']),
+            models.Index(fields=['interaction_type', 'timestamp']),
+        ]
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.get_interaction_type_display()} - {self.product.name}"

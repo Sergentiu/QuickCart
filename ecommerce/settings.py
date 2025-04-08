@@ -175,24 +175,33 @@ STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY', 'pk_test_51Q5WYKLFT
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_51Q5WYKLFTYVa6FCxOmJG4jvtX9BaZKX2Zc7lJ624q55VyISAG8csOUSJna5INRQGDtpKf5ZzyEvta1M5kyLtGLBl00N3DyIXQO')
 
 # Security Settings
-SECURE_SSL_REDIRECT = not DEBUG  # Redirect all non-HTTPS requests to HTTPS
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
-X_FRAME_OPTIONS = 'DENY'
+SECURE_SSL_REDIRECT = False  # Disable SSL redirect during development
+SECURE_HSTS_SECONDS = 0  # Disable HSTS during development
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Keep this enabled
+SECURE_BROWSER_XSS_FILTER = True    # Keep this enabled
+X_FRAME_OPTIONS = 'DENY'            # Keep this enabled
 
-# Session Security
-SESSION_COOKIE_SECURE = not DEBUG
+# Session Settings
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SAMESITE = 'Lax'  # Prevents CSRF attacks
+CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'
 
+# Cache settings - using local memory cache instead of Redis
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
 # Two-Factor Authentication Settings
 TWO_FACTOR_REMEMBER_COOKIE_AGE = 30 * 24 * 60 * 60  # 30 days
-TWO_FACTOR_REMEMBER_COOKIE_SECURE = not DEBUG
-TWO_FACTOR_REMEMBER_COOKIE_HTTPONLY = True
-TWO_FACTOR_REMEMBER_COOKIE_SAMESITE = 'Lax'
+TWO_FACTOR_REMEMBER_COOKIE_SECURE = False  # Allow HTTP during development
+TWO_FACTOR_REMEMBER_COOKIE_HTTPONLY = True  # Keep this enabled
+TWO_FACTOR_REMEMBER_COOKIE_SAMESITE = 'Lax'  # Keep this enabled

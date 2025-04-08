@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from .cart import Cart
 from django.conf import settings
@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Order, OrderItem
 from shop.models import Product
+from django.contrib import messages
+from .forms import AddToCartForm
+from shop.behavior_tracker import BehaviorTracker
 
 stripe.api_key = settings.STRIPE_SECRET_KEY  # Set Stripe API key
 
@@ -92,3 +95,69 @@ def checkout_view(request):
 @login_required
 def payment_success(request):
     return render(request, 'payment_success.html')  # Render success page after payment
+
+@login_required
+def cart_detail(request):
+    cart = Cart(request)
+    return render(request, 'cart/detail.html', {'cart': cart})
+
+@login_required
+def add_to_cart(request, product_id):
+    cart = Cart(request)
+    product = get_object_or_404(Product, id=product_id)
+    form = AddToCartForm(request.POST)
+    
+    if form.is_valid():
+        cd = form.cleaned_data
+        cart.add(
+            product=product,
+            quantity=cd['quantity'],
+            update_quantity=cd['update']
+        )
+        
+        # Track cart addition
+        BehaviorTracker.track_behavior(
+            user=request.user,
+            product=product,
+            interaction_type='cart_add',
+            metadata={
+                'quantity': cd['quantity'],
+                'update': cd['update']
+            }
+        )
+        
+        messages.success(request, 'Product added to cart successfully')
+    return redirect('cart:cart_detail')
+
+@login_required
+def remove_from_cart(request, product_id):
+    cart = Cart(request)
+    product = get_object_or_404(Product, id=product_id)
+    
+    # Track cart removal
+    BehaviorTracker.track_behavior(
+        user=request.user,
+        product=product,
+        interaction_type='cart_remove'
+    )
+    
+    cart.remove(product)
+    messages.success(request, 'Product removed from cart successfully')
+    return redirect('cart:cart_detail')
+
+@login_required
+def clear_cart(request):
+    cart = Cart(request)
+    
+    # Track cart clearing
+    for item in cart:
+        BehaviorTracker.track_behavior(
+            user=request.user,
+            product=item['product'],
+            interaction_type='cart_remove',
+            metadata={'cleared_cart': True}
+        )
+    
+    cart.clear()
+    messages.success(request, 'Cart cleared successfully')
+    return redirect('cart:cart_detail')

@@ -152,3 +152,60 @@ def get_collaborative_recommendations(user_id, num_recommendations=5):
     except Exception as e:
         print(f"Error generating collaborative recommendations: {str(e)}")
         return []
+
+def get_hybrid_recommendations(user_id, product_name=None, num_recommendations=5):
+    """
+    Returns a list of product names recommended using a hybrid approach that combines
+    content-based and collaborative filtering. The weights are dynamically adjusted
+    based on the available data.
+    """
+    try:
+        # Get recommendations from both methods
+        content_recs = []
+        collab_recs = []
+        
+        # Get content-based recommendations if a product is specified
+        if product_name:
+            content_recs = get_product_recommendations(product_name, num_recommendations)
+        
+        # Get collaborative recommendations
+        collab_recs = get_collaborative_recommendations(user_id, num_recommendations)
+        
+        # Calculate weights based on available data
+        content_weight = 0.4  # Base weight for content-based
+        collab_weight = 0.6   # Base weight for collaborative
+        
+        # Adjust weights if one method has no recommendations
+        if not content_recs and not collab_recs:
+            print("No recommendations available from either method")
+            return []
+        elif not content_recs:
+            content_weight = 0
+            collab_weight = 1
+        elif not collab_recs:
+            content_weight = 1
+            collab_weight = 0
+        
+        # Combine recommendations with weights
+        hybrid_recs = {}
+        
+        # Add content-based recommendations with their weight
+        for rec in content_recs:
+            hybrid_recs[rec] = hybrid_recs.get(rec, 0) + content_weight
+        
+        # Add collaborative recommendations with their weight
+        for rec in collab_recs:
+            hybrid_recs[rec] = hybrid_recs.get(rec, 0) + collab_weight
+        
+        # Sort by combined weight and get top N
+        sorted_recs = sorted(hybrid_recs.items(), key=lambda x: x[1], reverse=True)
+        recommendations = [rec[0] for rec in sorted_recs[:num_recommendations]]
+        
+        print(f"Hybrid recommendations (content weight: {content_weight}, collab weight: {collab_weight}):")
+        print(f"Returning {len(recommendations)} recommendations: {recommendations}")
+        
+        return recommendations
+        
+    except Exception as e:
+        print(f"Error generating hybrid recommendations: {str(e)}")
+        return []
