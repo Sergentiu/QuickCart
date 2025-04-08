@@ -183,6 +183,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True  # Keep this enabled
 SECURE_BROWSER_XSS_FILTER = True    # Keep this enabled
 X_FRAME_OPTIONS = 'DENY'            # Keep this enabled
 
+<<<<<<< HEAD
 # Session Settings
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_SECURE = True
@@ -191,6 +192,15 @@ SESSION_COOKIE_SAMESITE = 'Lax'  # Prevents CSRF attacks
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'
+=======
+# Session Security
+SESSION_COOKIE_SECURE = False  # Allow HTTP during development
+SESSION_COOKIE_HTTPONLY = True  # Keep this enabled
+SESSION_COOKIE_SAMESITE = 'Lax'  # Keep this enabled
+CSRF_COOKIE_SECURE = False  # Allow HTTP during development
+CSRF_COOKIE_HTTPONLY = True  # Keep this enabled
+CSRF_COOKIE_SAMESITE = 'Lax'  # Keep this enabled
+>>>>>>> 4089106cff3f1f0296b07eebd01a23c96f2b8cb9
 
 # Cache settings - using local memory cache instead of Redis
 CACHES = {
@@ -204,4 +214,8 @@ CACHES = {
 TWO_FACTOR_REMEMBER_COOKIE_AGE = 30 * 24 * 60 * 60  # 30 days
 TWO_FACTOR_REMEMBER_COOKIE_SECURE = False  # Allow HTTP during development
 TWO_FACTOR_REMEMBER_COOKIE_HTTPONLY = True  # Keep this enabled
+<<<<<<< HEAD
 TWO_FACTOR_REMEMBER_COOKIE_SAMESITE = 'Lax'  # Keep this enabled
+=======
+TWO_FACTOR_REMEMBER_COOKIE_SAMESITE = 'Lax'  # Keep this enabled
+>>>>>>> 4089106cff3f1f0296b07eebd01a23c96f2b8cb9
