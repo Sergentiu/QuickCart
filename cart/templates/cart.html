@@ -25,9 +25,20 @@
                 <input type="submit" value="Empty cart" style="padding: 10px 15px; font-size: 1.2em; background-color: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
             </form>
 
-            <a href="{% url 'checkout_url' %}">
-                <button style="padding: 10px 20px; font-size: 1.2em; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">Pay Now</button>
-            </a>
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="{% url 'checkout_url' %}" class="checkout-button">Proceed to Checkout</a>
+            </div>
+
+            <!-- Back to Products Button -->
+            <div style="text-align: center; margin-top: 20px;">
+                 <a href="{% url 'product_list' %}" class="back-btn">Back to Products</a>
+            </div>
+        {% else %}
+            <p>Your cart is empty.</p>
+            <!-- Back to Products Button (Visible when cart is empty) -->
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="{% url 'product_list' %}" class="back-btn">Back to Products</a>
+            </div>
         {% endif %}
     </div>
 
