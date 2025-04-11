@@ -134,9 +134,19 @@ def faq_page(request):
     })
 
 def policies_page(request):
-    policies = Policy.objects.all()
+    policies_qs = Policy.objects.all()
+    
+    # Format policies for display
+    formatted_policies = []
+    for policy in policies_qs:
+        formatted_key = policy.key.replace('_', ' ').title()  # Replace underscore and title case
+        formatted_policies.append({
+            'key': formatted_key,
+            'value': policy.value
+        })
+
     return render(request, 'policies_page.html', {
-        'policies': policies,
+        'policies': formatted_policies, # Pass the formatted list
         'dark_mode': request.session.get('dark_mode', False),
     })
 

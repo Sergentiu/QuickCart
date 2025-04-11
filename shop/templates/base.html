@@ -1,9 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuickCart</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body {
@@ -161,6 +163,49 @@
             border-radius: 50%;
             font-size: 12px;
             font-weight: bold;
+        }
+
+        /* Back to Products button style */
+        .back-btn {
+            display: inline-block; /* Ensure it behaves like a button */
+            padding: 0.8rem 1.5rem; /* Slightly adjusted padding */
+            margin-top: 1rem; /* Add some top margin */
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem; /* Adjusted font size */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: var(--secondary-color, #6c757d);
+            color: white !important; /* Ensure text is white */
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background-color: var(--secondary-dark, #545b62);
+            transform: translateY(-2px);
+        }
+
+        /* Checkout button style */
+        .checkout-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: var(--success-color, #28a745); /* Green */
+            color: white !important;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .checkout-button:hover {
+            background-color: var(--success-dark, #218838);
+            transform: translateY(-2px);
         }
     </style>
 </head>
