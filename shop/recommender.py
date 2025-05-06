@@ -15,10 +15,8 @@ def get_product_recommendations(product_name, num_recommendations=5):
     try:
         # Get all available products
         products = Product.objects.select_related('category').filter(available=True)
-        print(f"Found {products.count()} available products")
         
         if not products.exists():
-            print("No available products found")
             return []
             
         # Get product descriptions and names
@@ -33,10 +31,7 @@ def get_product_recommendations(product_name, num_recommendations=5):
             product_names.append(product.name)
         
         if product_name not in product_names:
-            print(f"Product '{product_name}' not found in available products")
             return []
-            
-        print(f"Processing recommendations for product: {product_name}")
         
         # Create TF-IDF matrix with improved parameters for small datasets
         vectorizer = TfidfVectorizer(
@@ -47,11 +42,9 @@ def get_product_recommendations(product_name, num_recommendations=5):
             max_df=0.95  # Remove terms that appear in more than 95% of products
         )
         tfidf_matrix = vectorizer.fit_transform(descriptions)
-        print(f"Created TF-IDF matrix with shape: {tfidf_matrix.shape}")
         
         # Calculate cosine similarity
         cosine_similarities = cosine_similarity(tfidf_matrix)
-        print(f"Calculated cosine similarity matrix with shape: {cosine_similarities.shape}")
         
         # Get index of the target product
         product_idx = product_names.index(product_name)
@@ -69,12 +62,10 @@ def get_product_recommendations(product_name, num_recommendations=5):
         # Get top N recommendations
         top_indices = [s[0] for s in similarity_scores[:num_recommendations]]
         recommendations = [product_names[i] for i in top_indices]
-        print(f"Returning {len(recommendations)} recommendations: {recommendations}")
         
         return recommendations
         
     except Exception as e:
-        print(f"Error generating recommendations: {str(e)}")
         return []
 
 # Collaborative Filtering: Recommends products based on user purchase history
@@ -86,10 +77,8 @@ def get_collaborative_recommendations(user_id, num_recommendations=5):
     try:
         # Get all completed orders
         orders = Order.objects.filter(status='completed')
-        print(f"Found {orders.count()} completed orders")
         
         if not orders.exists():
-            print("No completed orders found - returning content-based recommendations")
             # If no completed orders, return content-based recommendations for a popular product
             popular_product = Product.objects.filter(available=True).first()
             if popular_product:
@@ -111,10 +100,7 @@ def get_collaborative_recommendations(user_id, num_recommendations=5):
                 user_product_matrix[order_user_id][product_name] += item.quantity
         
         if not user_product_matrix:
-            print("No purchase data found in completed orders")
             return []
-            
-        print(f"Created user-product matrix with {len(user_product_matrix)} users and {len(set(p for u in user_product_matrix.values() for p in u.keys()))} products")
         
         # Convert to numpy array
         users = list(user_product_matrix.keys())
@@ -131,7 +117,6 @@ def get_collaborative_recommendations(user_id, num_recommendations=5):
         
         # Get user's row in the matrix
         if user_id not in users:
-            print(f"User {user_id} not found in purchase history")
             return []
             
         user_idx = users.index(user_id)
@@ -145,12 +130,10 @@ def get_collaborative_recommendations(user_id, num_recommendations=5):
         
         # Get top N recommendations
         recommendations = [products[i] for i in sorted_indices[:num_recommendations]]
-        print(f"Returning {len(recommendations)} recommendations: {recommendations}")
         
         return recommendations
         
     except Exception as e:
-        print(f"Error generating collaborative recommendations: {str(e)}")
         return []
 
 def get_hybrid_recommendations(user_id, product_name=None, num_recommendations=5):
@@ -177,7 +160,6 @@ def get_hybrid_recommendations(user_id, product_name=None, num_recommendations=5
         
         # Adjust weights if one method has no recommendations
         if not content_recs and not collab_recs:
-            print("No recommendations available from either method")
             return []
         elif not content_recs:
             content_weight = 0
@@ -201,11 +183,7 @@ def get_hybrid_recommendations(user_id, product_name=None, num_recommendations=5
         sorted_recs = sorted(hybrid_recs.items(), key=lambda x: x[1], reverse=True)
         recommendations = [rec[0] for rec in sorted_recs[:num_recommendations]]
         
-        print(f"Hybrid recommendations (content weight: {content_weight}, collab weight: {collab_weight}):")
-        print(f"Returning {len(recommendations)} recommendations: {recommendations}")
-        
         return recommendations
         
     except Exception as e:
-        print(f"Error generating hybrid recommendations: {str(e)}")
         return []

@@ -133,7 +133,6 @@ USE_TZ = True
 # Registration form
 REGISTRATION_FORM = 'profileapp.forms.CustomRegistrationForm'
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
@@ -142,6 +141,7 @@ MEDIA_ROOT = BASE_DIR / 'media'  # Where uploaded files are stored
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'media/static']  # Where your static default image lives
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Where collectstatic will collect files
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

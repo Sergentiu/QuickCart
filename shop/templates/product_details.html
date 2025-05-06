@@ -16,6 +16,9 @@
             <div class="product-meta">
                 <span class="product-price">${{ product.price|floatformat:2 }}</span>
                 <span class="product-category">Category: {{ product.category.name }}</span>
+                <span class="product-stock {% if product.stock <= 0 %}out-of-stock{% endif %}">
+                    Stock: {{ product.stock }}
+                </span>
             </div>
             
             <div class="product-actions">
@@ -24,7 +27,7 @@
                     <div class="quantity-selector">
                         {{ add_form }}
                     </div>
-                    <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+                    <button type="submit" class="add-to-cart-btn {% if product.stock <= 0 %}disabled{% endif %}" {% if product.stock <= 0 %}disabled{% endif %}>Add to Cart</button>
                 </form>
                 <a href="{% url 'product_list' %}" class="back-btn">Back to Products</a>
             </div>
@@ -167,6 +170,16 @@
         color: var(--text-secondary, #666);
     }
 
+    .product-stock {
+        font-size: 1.1rem;
+        color: var(--text-secondary, #666);
+    }
+
+    .product-stock.out-of-stock {
+        color: #dc3545;
+        font-weight: bold;
+    }
+
     .product-actions {
         display: flex;
         flex-direction: column;
@@ -206,6 +219,12 @@
         color: white;
     }
 
+    .add-to-cart-btn.disabled {
+        background-color: var(--secondary-color, #6c757d);
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
     .back-btn {
         background-color: var(--secondary-color, #6c757d);
         color: white;
@@ -213,7 +232,7 @@
         text-decoration: none;
     }
 
-    .add-to-cart-btn:hover {
+    .add-to-cart-btn:hover:not(.disabled) {
         background-color: var(--primary-dark, #0056b3);
         transform: translateY(-2px);
     }
@@ -351,4 +370,31 @@
         }
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var stock = {{ product.stock|default:0 }};
+        var quantitySelector = document.querySelector('.quantity-selector select, .quantity-selector input');
+        var addToCartBtn = document.querySelector('.add-to-cart-btn');
+
+        function updateButtonState() {
+            var selectedQty = 1;
+            if (quantitySelector) {
+                selectedQty = parseInt(quantitySelector.value, 10) || 1;
+            }
+            if (stock <= 0 || selectedQty > stock) {
+                addToCartBtn.disabled = true;
+                addToCartBtn.classList.add('disabled');
+            } else {
+                addToCartBtn.disabled = false;
+                addToCartBtn.classList.remove('disabled');
+            }
+        }
+
+        if (quantitySelector) {
+            quantitySelector.addEventListener('change', updateButtonState);
+            updateButtonState();
+        }
+    });
+</script>
 {% endblock main %}

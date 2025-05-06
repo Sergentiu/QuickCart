@@ -7,7 +7,7 @@ from .models import Product, Category, FAQ, Policy
 class ProductAdminForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'price', 'description', 'category', 'image', 'available', 'slug']  # Include slug
+        fields = ['name', 'price', 'description', 'category', 'image', 'available', 'stock', 'slug']  # Added stock
         exclude = []  # Remove exclude since we're handling slug explicitly
 
     def clean_price(self):
@@ -15,6 +15,12 @@ class ProductAdminForm(forms.ModelForm):
         if price <= 0:
             raise ValidationError("Price must be greater than zero.")
         return price
+
+    def clean_stock(self):
+        stock = self.cleaned_data.get("stock")
+        if stock < 0:
+            raise ValidationError("Stock cannot be negative.")
+        return stock
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -36,9 +42,10 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'price', 'available', 'created', 'updated', 'image_preview')
+    form = ProductAdminForm
+    list_display = ('name', 'category', 'price', 'stock', 'available', 'created', 'updated', 'image_preview')
     list_filter = ('available', 'created', 'updated', 'category')
-    list_editable = ('price', 'available')
+    list_editable = ('price', 'stock', 'available')
     prepopulated_fields = {'slug': ('name',)}
     search_fields = ('name', 'description')
     date_hierarchy = 'created'
