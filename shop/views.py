@@ -8,7 +8,6 @@ from .serializers import ProductSerializer
 from .recommender import get_hybrid_recommendations
 from .behavior_tracker import BehaviorTracker
 
-@login_required
 def product_list_view(request):
     category_slug = request.GET.get('category')
     products = Product.objects.all()
@@ -134,9 +133,19 @@ def faq_page(request):
     })
 
 def policies_page(request):
-    policies = Policy.objects.all()
+    policies_qs = Policy.objects.all()
+    
+    # Format policies for display
+    formatted_policies = []
+    for policy in policies_qs:
+        formatted_key = policy.key.replace('_', ' ').title()  # Replace underscore and title case
+        formatted_policies.append({
+            'key': formatted_key,
+            'value': policy.value
+        })
+
     return render(request, 'policies_page.html', {
-        'policies': policies,
+        'policies': formatted_policies, # Pass the formatted list
         'dark_mode': request.session.get('dark_mode', False),
     })
 

@@ -10,6 +10,9 @@ from shop.models import Product
 from django.contrib import messages
 from .forms import AddToCartForm
 from shop.behavior_tracker import BehaviorTracker
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 stripe.api_key = settings.STRIPE_SECRET_KEY  # Set Stripe API key
 
@@ -76,6 +79,36 @@ def checkout_view(request):
             order.status = 'completed'
             order.save()
             
+            # Update product stock
+            for item in cart.get_items():
+                product_id = item['product_id']
+                quantity = item['quantity']
+                try:
+                    product = Product.objects.get(id=product_id)
+                    product.stock -= quantity
+                    product.save()
+                except Product.DoesNotExist:
+                    continue
+            
+            # Send confirmation email
+            subject = f'Order Confirmation - Order #{order.id}'
+            html_message = render_to_string('order_confirmation_email.html', {
+                'user': request.user,
+                'order': order,
+            })
+            plain_message = strip_tags(html_message)
+            from_email = settings.DEFAULT_FROM_EMAIL
+            to_email = request.user.email
+            
+            send_mail(
+                subject,
+                plain_message,
+                from_email,
+                [to_email],
+                html_message=html_message,
+                fail_silently=False,
+            )
+            
             # Empty the cart after successful payment
             request.session['cart'] = {}
             return redirect('payment_success')
@@ -109,9 +142,16 @@ def add_to_cart(request, product_id):
     
     if form.is_valid():
         cd = form.cleaned_data
+        quantity = cd['quantity']
+        
+        # Check if there's enough stock
+        if product.stock < quantity:
+            messages.error(request, f'Sorry, only {product.stock} items available in stock.')
+            return redirect('product_detail', slug=product.slug)
+        
         cart.add(
             product=product,
-            quantity=cd['quantity'],
+            quantity=quantity,
             update_quantity=cd['update']
         )
         
@@ -121,7 +161,7 @@ def add_to_cart(request, product_id):
             product=product,
             interaction_type='cart_add',
             metadata={
-                'quantity': cd['quantity'],
+                'quantity': quantity,
                 'update': cd['update']
             }
         )

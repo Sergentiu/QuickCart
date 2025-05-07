@@ -1,25 +1,63 @@
 {% extends 'base.html' %}
 
 {% block main %}
-<div class="chat-container" style="width: 80%; max-width: 600px; margin: 20px auto; padding: 15px; background-color: white; border: 1px solid #007BFF; border-radius: 8px;">
+<div class="chat-container" style="width: 80%; max-width: 800px; margin: 20px auto; padding: 15px; background-color: white; border: 1px solid #ddd; border-radius: 8px;">
     <h2 style="color: #007BFF; text-align: center;">Chat Bot</h2>
 
-    <!-- Chatbox with Auto-scroll -->
-    <div id="chatbox" style="height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background-color: #f9f9f9;">
+    <!-- Chatbox with Auto-scroll - Increased height -->
+    <div id="chatbox" class="chatbox" style="height: 500px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background-color: #f9f9f9; margin-bottom: 15px;">
         {% for message in history %}
-            <div class="message {{ message.sender }}" style="padding: 5px; border-radius: 5px; margin-bottom: 5px; background-color: {% if message.sender == 'bot' %}#e9ecef{% else %}#007BFF; color: white{% endif %}; text-align: {% if message.sender == 'bot' %}left{% else %}right{% endif %};">
-                {{ message.message }}
+            <div class="message-container {{ message.sender }}">
+                <div class="message {{ message.sender }}">
+                    <strong>{% if message.sender == 'bot' %}Bot:{% else %}Me:{% endif %}</strong> {{ message.message }}
+                </div>
             </div>
         {% endfor %}
     </div>
 
     <div style="margin-top: 10px; display: flex;">
-        <input type="text" id="userInput" placeholder="Type your message..." style="flex: 1; padding: 8px;" onkeydown="handleKeyPress(event)">
-        <button onclick="sendMessage()" style="padding: 8px 15px; background-color: #007BFF; color: white; border: none; cursor: pointer;">Send</button>
+        <input type="text" id="userInput" placeholder="Type your message..." style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-right: 5px;" onkeydown="handleKeyPress(event)">
+        <button onclick="sendMessage()" style="padding: 8px 15px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer;">Send</button>
     </div>
 </div>
 
 <style>
+    /* Container to handle alignment */
+    .message-container {
+        margin-bottom: 8px; /* Maintain vertical spacing */
+    }
+    .message-container.bot {
+        text-align: left;
+    }
+    .message-container.user {
+        text-align: right;
+    }
+
+    .chatbox .message {
+        display: inline-block; /* Make bubble width fit content */
+        padding: 8px 12px;
+        border-radius: 15px; /* Rounded corners */
+        max-width: 75%; /* Still limit max width */
+        word-wrap: break-word;
+        text-align: left; /* Always align text left within bubble */
+    }
+
+    .chatbox .message.bot {
+        background-color: #e9ecef;
+        color: #333;
+    }
+
+    .chatbox .message.user {
+        background-color: #f1f1f1; /* Light grey for user messages */
+        color: #333;
+    }
+    
+    .chatbox .message strong {
+        margin-right: 5px;
+        font-weight: 600;
+    }
+
+    /* Dark Mode Styles */
     .dark-mode .chat-container {
         background-color: #121212 !important;
         color: #ffffff !important;
@@ -36,8 +74,9 @@
         color: white !important;
     }
 
+    /* Dark mode user messages - slightly different grey */
     .dark-mode .message.user {
-        background-color: #007BFF !important;
+        background-color: #404040 !important; 
         color: white !important;
     }
 
@@ -90,8 +129,8 @@ function sendMessage() {
 
     const chatbox = document.getElementById("chatbox");
     
-    // Add user message to chatbox and scroll immediately
-    chatbox.innerHTML += `<div class="message user" style="background-color: #007BFF; color: white; padding: 5px; border-radius: 5px; text-align: right; margin-top: 5px;">${message}</div>`;
+    // Add user message wrapped in container to chatbox and scroll immediately
+    chatbox.innerHTML += `<div class="message-container user"><div class="message user"><strong>Me:</strong> ${message}</div></div>`;
     scrollToBottom();
 
     fetch("{% url 'process_message' %}", {
@@ -104,7 +143,8 @@ function sendMessage() {
     })
     .then(response => response.json())
     .then(data => {
-        chatbox.innerHTML += `<div class="message bot" style="background-color: #e9ecef; padding: 5px; border-radius: 5px; margin-top: 5px;">${data.response}</div>`;
+        // Add bot message wrapped in container to chatbox and scroll
+        chatbox.innerHTML += `<div class="message-container bot"><div class="message bot"><strong>Bot:</strong> ${data.response}</div></div>`;
         scrollToBottom();
     });
 

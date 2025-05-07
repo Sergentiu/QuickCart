@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
 {% block main %}
+<style>
+    input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea {
+        box-sizing: border-box;
+    }
+</style>
+
 <script src="https://js.stripe.com/v3/"></script>
 
 <div style="max-width: 600px; margin: auto; padding: 20px; border: 1px solid #007BFF; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">

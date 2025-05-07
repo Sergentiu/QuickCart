@@ -1,4 +1,3 @@
-# views.py
 import json
 import requests
 from django.shortcuts import render
