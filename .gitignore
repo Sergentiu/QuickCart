@@ -23,7 +23,6 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-db.sqlite3
 __pycache__/
 *.pyc
 
