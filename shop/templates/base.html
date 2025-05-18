@@ -207,6 +207,12 @@
             background-color: var(--success-dark, #218838);
             transform: translateY(-2px);
         }
+
+        .dark-mode header .nav-link,
+        .dark-mode header form .nav-link,
+        .dark-mode header button.nav-link {
+            background: none !important;
+        }
     </style>
 </head>
 <body class="{% if request.session.dark_mode %}dark-mode{% endif %}">
